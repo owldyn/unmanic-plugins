@@ -177,11 +177,10 @@ class StreamMapper(object):
 
         # Loop over all streams found in the file probe
         for stream_info in file_probe_streams:
-            codec_type = stream_info.get('codec_type', '').lower()
             # Fore each of these streams:
 
             # If this is a video/image stream?
-            if codec_type == "video":
+            if stream_info.get('codec_type').lower() == "video":
                 # Map the video stream
                 if "video" in processing_stream_type:
                     if not self.test_stream_needs_processing(stream_info):
@@ -201,7 +200,7 @@ class StreamMapper(object):
                     continue
 
             # If this is a audio stream?
-            elif codec_type == "audio":
+            elif stream_info.get('codec_type').lower() == "audio":
                 # Map the audio stream
                 if "audio" in processing_stream_type:
                     if not self.test_stream_needs_processing(stream_info):
@@ -221,7 +220,7 @@ class StreamMapper(object):
                     continue
 
             # If this is a subtitle stream?
-            elif codec_type == "subtitle":
+            elif stream_info.get('codec_type').lower() == "subtitle":
                 # Map the subtitle stream
                 if "subtitle" in processing_stream_type:
                     if not self.test_stream_needs_processing(stream_info):
@@ -241,7 +240,7 @@ class StreamMapper(object):
                     continue
 
             # If this is a data stream?
-            elif codec_type == "data":
+            elif stream_info.get('codec_type').lower() == "data":
                 # Map the data stream
                 if "data" in processing_stream_type:
                     if not self.test_stream_needs_processing(stream_info):
@@ -261,7 +260,7 @@ class StreamMapper(object):
                     continue
 
             # If this is a attachment stream?
-            elif codec_type == "attachment":
+            elif stream_info.get('codec_type').lower() == "attachment":
                 # Map the attachment stream
                 if "attachment" in processing_stream_type:
                     if not self.test_stream_needs_processing(stream_info):
@@ -307,7 +306,7 @@ class StreamMapper(object):
                 options[val_pos] = value
             else:
                 options += [key, value]
-        return
+        return options
 
     def streams_need_processing(self):
         """
@@ -319,20 +318,6 @@ class StreamMapper(object):
         """
         return self.__set_stream_mapping()
 
-    def container_needs_remuxing(self, container_extension):
-        """
-        Returns True/False if the file container needs to be processed.
-
-        :return:
-        """
-        if not self.input_file:
-            raise Exception("Input file not yet set")
-
-        split_file_in = os.path.splitext(self.input_file)
-        if split_file_in[1].lstrip('.') != container_extension.lstrip('.'):
-            return True
-        return False
-
     def set_input_file(self, path):
         """Set the input file for the FFmpeg args"""
         self.input_file = os.path.abspath(path)
@@ -340,14 +325,6 @@ class StreamMapper(object):
     def set_output_file(self, path):
         """Set the output file for the FFmpeg args"""
         self.output_file = os.path.abspath(path)
-
-    def set_output_null(self):
-        """Set the output container to NULL for the FFmpeg args"""
-        self.output_file = '-'
-        main_options = {
-            "-f": 'null',
-        }
-        self.__build_args(self.main_options, **main_options)
 
     def set_ffmpeg_generic_options(self, *args, **kwargs):
         """
@@ -362,7 +339,7 @@ class StreamMapper(object):
         :param kwargs:
         :return:
         """
-        self.__build_args(self.generic_options, *args, **kwargs)
+        self.generic_options = self.__build_args(self.generic_options, *args, **kwargs)
 
     def set_ffmpeg_main_options(self, *args, **kwargs):
         """
@@ -375,7 +352,7 @@ class StreamMapper(object):
 
         :return:
         """
-        self.__build_args(self.main_options, *args, **kwargs)
+        self.main_options = self.__build_args(self.main_options, *args, **kwargs)
 
     def set_ffmpeg_advanced_options(self, *args, **kwargs):
         """
@@ -394,7 +371,7 @@ class StreamMapper(object):
 
         :return:
         """
-        self.__build_args(self.advanced_options, *args, **kwargs)
+        self.advanced_options = self.__build_args(self.advanced_options, *args, **kwargs)
 
     def get_stream_mapping(self):
         """
@@ -447,9 +424,6 @@ class StreamMapper(object):
         # This class requires at least one output file specified with the output_file attribute
         if not self.output_file:
             raise Exception("Output file has not been set")
-        elif self.output_file == '-':
-            args += [self.output_file]
-        else:
-            args += ['-y', self.output_file]
+        args += ['-y', self.output_file]
 
         return args
