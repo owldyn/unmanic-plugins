@@ -1,13 +1,13 @@
 {
-    "author": "Josh.5",
+    "author": "owldyn",
     "compatibility": [
         1,
         2
     ],
-    "description": "Ensure all video streams are encoded with the H264 codec using the libx264 encoder.",
+    "description": "Ensure all video streams are encoded with the vp9 codec using the libvpx encoder.",
     "icon": "https://raw.githubusercontent.com/Josh5/unmanic.plugin.encoder_video_h264_libx264/master/icon.png",
-    "id": "encoder_video_h264_libx264",
-    "name": "Video Encoder H264 - libx264 (CPU)",
+    "id": "encoder_video_vp9_libvpx",
+    "name": "Video Encoder vp9 - libvpx (CPU)",
     "platform": [
         "all"
     ],
