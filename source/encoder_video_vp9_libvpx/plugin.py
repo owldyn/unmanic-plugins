@@ -319,6 +319,10 @@ def on_worker_process(data):
                 mapper.advanced_options = advanced_options
 
         else:
+            advanced_kwargs = {'-pix_fmt': 'yuv420p10le',
+                               '-speed': '0',
+                               '-threads': '4'
+                            }
             mapper.set_ffmpeg_advanced_options(**advanced_kwargs)
 
         # Get generated ffmpeg args
