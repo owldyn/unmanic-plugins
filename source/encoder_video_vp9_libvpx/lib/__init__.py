@@ -2,10 +2,10 @@
 # -*- coding: utf-8 -*-
 
 """
-    unmanic.__init__.py
+    plugins.__init__.py
 
     Written by:               Josh.5 <jsunnex@gmail.com>
-    Date:                     30 Jul 2021, (12:12 PM)
+    Date:                     12 Aug 2021, (8:51 AM)
 
     Copyright:
         Copyright (C) 2021 Josh Sunnex
