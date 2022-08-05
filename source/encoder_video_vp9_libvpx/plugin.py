@@ -36,7 +36,7 @@ class Settings(PluginSettings):
     settings = {
         "advanced":              False,
         "crf":                   23,
-        "deadline":              "medium",
+        "deadline":              "good",
         "main_options":          "",
         "advanced_options":      "",
         "custom_options":        "",
