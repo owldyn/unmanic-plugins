@@ -185,7 +185,7 @@ class PluginStreamMapper(StreamMapper):
     def test_stream_needs_processing(self, stream_info: dict):
         if stream_info.get('codec_name').lower() in self.image_video_codecs:
             return False
-        elif stream_info.get('codec_name').lower() in ['vp9', 'vp9 (Profile 2)', 'yuv420p10le(tv, bt709, progressive)', 'vp9 (Profile 2), yuv420p10le(tv, bt709, progressive)']:
+        elif stream_info.get('codec_name').lower() in ['vp9']:
             return False
         return True
 
