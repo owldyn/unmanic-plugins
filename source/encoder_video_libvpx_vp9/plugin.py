@@ -152,7 +152,7 @@ class PluginStreamMapper(StreamMapper):
         stream_encoding = [
                 '-c:v:{}'.format(stream_id), 'libvpx-vp9',
                 '-threads', self.settings.get_setting('threads'),
-                '-row-mt', 1 if self.settings.get_setting('row-mt') else 0,
+                '-row-mt', '1' if self.settings.get_setting('row-mt') else '0',
                 '-deadline', self.settings.get_setting('deadline'),
                 '-cpu-used', self.settings.get_setting('cpu-used')
         ]
