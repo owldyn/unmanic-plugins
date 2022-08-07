@@ -42,9 +42,9 @@ class Settings(PluginSettings):
         "bitrate":  "2M",
         "deadline": "good",
         "cpu-used": "0",
-        "row-mt": "0",
+        "row-mt": False,
         "threads": "4",
-        "10-bit": "0",
+        "10-bit": False,
     }
     form_settings = {
         "mode":     {
@@ -251,7 +251,7 @@ def on_worker_process(data):
     """
     # Default to no FFMPEG command required. This prevents the FFMPEG command from running if it is not required
     data['exec_command'] = []
-    data['repeat'] = False
+    data['repeat'] = True
     # DEPRECIATED: 'exec_ffmpeg' kept for legacy Unmanic versions
     data['exec_ffmpeg'] = False
 
