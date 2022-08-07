@@ -251,7 +251,7 @@ def on_worker_process(data):
     """
     # Default to no FFMPEG command required. This prevents the FFMPEG command from running if it is not required
     data['exec_command'] = []
-    data['repeat'] = True
+    data['repeat'] = False
     # DEPRECIATED: 'exec_ffmpeg' kept for legacy Unmanic versions
     data['exec_ffmpeg'] = False
 
@@ -276,24 +276,27 @@ def on_worker_process(data):
     if mapper.streams_need_processing():
         # Set the input file
         mapper.set_input_file(abspath)
-        two_pass_subfix = "-0.log"
+        two_pass_subfix = "-0.log" # TODO check all numbers not just 0, just in case.
 
-        # Get generated ffmpeg args
-        ffmpeg_args = mapper.get_ffmpeg_args()
         # Set the output file
         # Do not remux the file. Keep the file out in the same container
         split_file_in = os.path.splitext(abspath)
         split_file_out = os.path.splitext(data.get('file_out'))
-        output_file_path = f'{split_file_in[0]}{split_file_out[1]}'
+        two_pass_folder_split = os.path.split(data.get('file_out'))
+        two_pass_file_split = os.path.split(abspath)
 
-        if os.path.exists(f'{output_file_path}{two_pass_subfix}'):
+        output_file_path = f'{split_file_out[0]}{split_file_in[1]}'
+        two_pass_log_file_path = f'{two_pass_folder_split[0]}/{two_pass_file_split[1]}'
+        # TODO setting for 2 pass
+        if os.path.exists(f'{two_pass_log_file_path}{two_pass_subfix}'):
             mapper.set_output_file(output_file_path)
-            ffmpeg_args.extend(['-pass', '2', '-passlogfile', f'{output_file_path}{two_pass_subfix}'])
+            two_pass_args = ['-pass', '2', '-passlogfile', f'{two_pass_log_file_path}']
             data['repeat'] = False
         else:
-            mapper.set_output_file(output_file_path)
-            ffmpeg_args.extend(['-pass', '1', '-passlogfile', f'{output_file_path}{two_pass_subfix}', '-an', '-f', 'null'])
+            mapper.set_output_null()
+            two_pass_args = ['-pass', '1', '-passlogfile', f'{two_pass_log_file_path}', '-an']
 
+        mapper.stream_encoding.extend(two_pass_args)
         # Get generated ffmpeg args
         ffmpeg_args = mapper.get_ffmpeg_args()
         # Apply ffmpeg args to command
