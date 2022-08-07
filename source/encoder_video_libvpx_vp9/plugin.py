@@ -287,11 +287,11 @@ def on_worker_process(data):
         output_file_path = f'{split_file_in[0]}{split_file_out[1]}'
 
         if os.path.exists(f'{output_file_path}{two_pass_subfix}'):
-            mapper.set_output_file(f'{output_file_path}')
+            mapper.set_output_file(output_file_path)
             ffmpeg_args.extend(['-pass', '2', '-passlogfile', f'{output_file_path}{two_pass_subfix}'])
             data['repeat'] = False
         else:
-            mapper.set_output_file('/dev/null')
+            mapper.set_output_file(output_file_path)
             ffmpeg_args.extend(['-pass', '1', '-passlogfile', f'{output_file_path}{two_pass_subfix}', '-an', '-f', 'null'])
 
         # Get generated ffmpeg args
