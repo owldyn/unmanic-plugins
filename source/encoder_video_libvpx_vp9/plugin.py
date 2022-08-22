@@ -138,11 +138,47 @@ class PluginStreamMapper(StreamMapper):
     def __init__(self):
         super(PluginStreamMapper, self).__init__(logger, ['video'])
         self.settings = None
+        self.image_video_codecs = [
+            'alias_pix',
+            'apng',
+            'brender_pix',
+            'dds',
+            'dpx',
+            'exr',
+            'fits',
+            'gif',
+            'mjpeg',
+            'mjpegb',
+            'pam',
+            'pbm',
+            'pcx',
+            'pfm',
+            'pgm',
+            'pgmyuv',
+            'pgx',
+            'photocd',
+            'pictor',
+            'pixlet',
+            'png',
+            'ppm',
+            'ptx',
+            'sgi',
+            'sunrast',
+            'tiff',
+            'vc1image',
+            'wmv3image',
+            'xbm',
+            'xface',
+            'xpm',
+            'xwd',
+        ]
 
     def set_settings(self, settings):
         self.settings = settings
 
     def test_stream_needs_processing(self, stream_info: dict):
+        if stream_info.get('codec_name').lower() in self.image_video_codecs:
+            return False
         if stream_info.get('codec_name').lower() in ['vp9']:
             return False
         return True
