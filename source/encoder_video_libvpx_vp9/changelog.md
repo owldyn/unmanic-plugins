@@ -1,3 +1,5 @@
+**<span style="color:#56adda">0.1.1</span>**
+- Fix 2-pass encoding option to actually work
 
 **<span style="color:#56adda">0.1.0</span>**
 - Add new options for encoding
