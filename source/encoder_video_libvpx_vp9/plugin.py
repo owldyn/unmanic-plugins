@@ -325,7 +325,7 @@ def on_worker_process(data):
 
         output_file_path = f'{split_file_out[0]}{split_file_in[1]}'
 
-        if settings.settings.get('2-pass'):
+        if settings.get_setting('2-pass'):
             two_pass_folder_split = os.path.split(data.get('file_out'))
             two_pass_file_split = os.path.split(abspath)
             two_pass_log_file_path = f'{two_pass_folder_split[0]}/{two_pass_file_split[1]}'
