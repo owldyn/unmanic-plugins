@@ -90,3 +90,25 @@ When the deadline/quality is set to realtime, the encoder will try to hit a part
 depend on CPU speed and the complexity of the clip that you are encoding.
 
 In order to keep the plugin simple, options higher than 5 have been disabled. Let me know if you really need this and I will make it happen...
+
+#### <span style="color:blue"> Threads to use</span>
+How many threads to allow the encoder to use. More results in faster encoding at sight filesize increase.
+The amount of threads usable is directly correlated with the width of the video, 1080p (1920x1080) being 4 threads.
+The max amount of threads for a given resolution can be calclated with the following formula:
+max_tiles = max(1, exp2(floor(log2(sb_cols)) - 2))
+with sb_cols = ceil(width / 64.0).
+(taken from https://stackoverflow.com/questions/41372045/vp9-encoding-limited-to-4-threads)
+
+
+#### <span style="color:blue"> Row Multi-threading: </span>
+Splits the encoding in a way that allows up to 4x the threads to be used.
+This allows faster encoding as there are more processor threads being used at the cost of less efficiency, resulting in larger file sizes.
+
+#### <span style="color:blue"> 2-pass encoding </span>
+Enables 2-pass encoding (which is highly recommended for vp9). This does an initial pass to significantly increase encoding efficiency.
+The initial pass is much faster than the second pass for actual encoding.
+
+#### <span style="color:blue"> 10-bit encoding </span>
+Increases quality at slight increase in filesize.
+Requires your ffmpeg to support it, the default ffmpeg on most/all linux distributions doesn't support it by default.
+If your ffmpeg instance doesn't support it, it will silently fail and default to 8-bit.

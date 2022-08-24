@@ -1,4 +1,9 @@
 
+**<span style="color:#56adda">0.1.0</span>**
+- Add new options for encoding
+- Fix issue when there is an image as a video stream
+- Change default settings
+
 **<span style="color:#56adda">0.0.5</span>**
 - Update FFmpeg helper
 - Add platform declaration

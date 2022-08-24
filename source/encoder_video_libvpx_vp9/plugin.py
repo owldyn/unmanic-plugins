@@ -37,8 +37,8 @@ logger = logging.getLogger("Unmanic.Plugin.encoder_video_libvpx_vp9")
 
 class Settings(PluginSettings):
     settings = {
-        "mode":     "average_bitrate",
-        "crf":      "31",
+        "mode":     "constrained_quality",
+        "crf":      "30",
         "bitrate":  "2M",
         "deadline": "good",
         "cpu-used": "0",
