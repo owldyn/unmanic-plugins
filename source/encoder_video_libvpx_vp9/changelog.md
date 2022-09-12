@@ -1,4 +1,7 @@
 **<span style="color:#56adda">0.2.0</span>**
+- Add a second way to get duration if the original one fails.
+
+**<span style="color:#56adda">0.2.0</span>**
 - Add auto-crop for black bars
 
 **<span style="color:#56adda">0.1.1</span>**

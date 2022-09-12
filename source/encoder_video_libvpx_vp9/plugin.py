@@ -134,7 +134,7 @@ class Settings(PluginSettings):
             "input_type":    "checkbox",
         },
         "auto-crop": {
-            "label":         "Auto Crop Black Bars (In testing. Use at your own risk)",
+            "label":         "Auto Crop Black Bars",
             "input_type":    "checkbox",
         }
     }
@@ -295,8 +295,13 @@ def get_video_stream_data(streams):
         if stream.get('codec_type') == 'video':
             width = stream.get('width', stream.get('coded_width', 0))
             height = stream.get('height', stream.get('coded_height', 0))
-            duration = stream.get('tags', {}).get('DURATION')
-            duration = conv_duration(duration)
+            # Multiple places duration could be, apparently?
+            duration = stream.get('duration')
+            if duration:
+                duration = float(duration)
+            else:
+                duration = stream.get('tags', {}).get('DURATION')
+                duration = conv_duration(duration)
             break
 
     return duration, width, height
