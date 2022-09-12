@@ -1,3 +1,6 @@
+**<span style="color:#56adda">0.2.0</span>**
+- Add auto-crop for black bars
+
 **<span style="color:#56adda">0.1.1</span>**
 - Fix 2-pass encoding option to actually work
 

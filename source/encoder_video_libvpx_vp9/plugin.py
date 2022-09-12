@@ -23,13 +23,14 @@
 """
 import logging
 import os
+import re
+import subprocess
 
 from unmanic.libs.unplugins.settings import PluginSettings
 
 from encoder_video_libvpx_vp9.lib.ffmpeg.parser import Parser
 from encoder_video_libvpx_vp9.lib.ffmpeg.probe import Probe
 from encoder_video_libvpx_vp9.lib.ffmpeg.stream_mapper import StreamMapper
-
 
 # Configure plugin logger
 logger = logging.getLogger("Unmanic.Plugin.encoder_video_libvpx_vp9")
@@ -46,6 +47,7 @@ class Settings(PluginSettings):
         "threads": "4",
         "10-bit": False,
         "2-pass": True,
+        "auto-crop": False,
     }
     form_settings = {
         "mode":     {
@@ -131,6 +133,10 @@ class Settings(PluginSettings):
             "label":         "2-pass encoding",
             "input_type":    "checkbox",
         },
+        "auto-crop": {
+            "label":         "Auto Crop Black Bars (In testing. Use at your own risk)",
+            "input_type":    "checkbox",
+        }
     }
 
 
@@ -273,6 +279,106 @@ def on_library_management_file_test(data):
 
     return data
 
+def conv_duration(duration):
+    duration_list = duration.split(':')
+    duration = 0
+    duration += float(duration_list[0]) * 60 * 60
+    duration += float(duration_list[1]) * 60
+    duration += float(duration_list[2])
+    return duration
+
+def get_video_stream_data(streams):
+    width = 0
+    height = 0
+    video_stream_index = 0
+    for stream in streams:
+        if stream.get('codec_type') == 'video':
+            width = stream.get('width', stream.get('coded_width', 0))
+            height = stream.get('height', stream.get('coded_height', 0))
+            duration = stream.get('tags', {}).get('DURATION')
+            duration = conv_duration(duration)
+            break
+
+    return duration, width, height
+
+def detect_black_bars(abspath, probe):
+    """
+    Detect if black bars exist
+
+    Fetch the current video width/height from the file probe
+
+
+    :param abspath:
+    :param probe_data:
+    :return:
+    """
+    logger = logging.getLogger("Unmanic.Plugin.video_transcoder")
+    probe_data = probe.get_probe()
+    
+    # TODO: Detect video duration. Base the ss param off the duration of the video in the probe data
+    duration, v_height, v_width = get_video_stream_data(probe_data.get('streams'))
+    timestamps = [duration/i for i in range(2,6)]
+    crop_values = []
+    for timestamp in timestamps:
+        # Run a ffmpeg command to cropdetect
+        mapper = StreamMapper(logger, ['video', 'audio', 'subtitle', 'data', 'attachment'])
+        mapper.set_input_file(abspath)
+        mapper.set_ffmpeg_generic_options(**{"-ss": str(timestamp)})
+        mapper.set_ffmpeg_advanced_options(**{"-vframes": '10', '-vf': 'cropdetect'})
+        mapper.set_output_null()
+
+        # Build ffmpeg command for detecting black bars
+        # TODO: See if we can support hardware decoding here
+        ffmpeg_args = mapper.get_ffmpeg_args()
+        ffmpeg_command = ['ffmpeg'] + ffmpeg_args
+        # Execute ffmpeg
+        pipe = subprocess.Popen(ffmpeg_command, stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
+        out, err = pipe.communicate()
+        raw_results = out.decode("utf-8")
+
+        # Parse the output of the ffmpeg command -read the crop value, crop width and crop height into variables
+        crop_value = None
+        regex = re.compile(r'\[Parsed_cropdetect.*\].*crop=(\d+:\d+:\d+:\d+)')
+        findall = re.findall(regex, raw_results)
+        if findall:
+            crop_values.append(findall[-1])
+        else:
+            logger.error("Unable to parse cropdetect from FFmpeg on file %s.", abspath)
+    final_crop_value = None
+    for value in crop_values:
+        crop_split = value.split(':')
+        crop_width = int(crop_split[0])
+        crop_height = int(crop_split[1])
+        crop_x = int(crop_split[2])
+        crop_y = int(crop_split[3])
+        
+        if crop_width < 0 or crop_height < 0:
+            continue
+        if not final_crop_value:
+            final_crop_value = value
+        else:
+            final_crop_split = final_crop_value.split(':')
+            final_crop_width = int(final_crop_split[0])
+            final_crop_height = int(final_crop_split[1])
+            # We only want the crop that takes the least away
+            if final_crop_width > crop_width or final_crop_height > crop_height:
+                final_crop_value = value
+    
+    if final_crop_value:
+        crop_split = final_crop_value.split(':')
+        crop_width = int(crop_split[0])
+        crop_height = int(crop_split[1])
+        crop_x = int(crop_split[2])
+        crop_y = int(crop_split[3])
+
+        # If the crop starting positions (x, y) are 0, return None.
+        # This may cause issues if the video is for some reason just on the top left? but I'm fine with that.
+        if crop_x == 0 and crop_y == 0:
+            # Video is already cropped to the correct resolution
+            logger.debug("File '%s' is already cropped to the resolution %sx%s.", abspath, crop_width, crop_height)
+            return None
+
+    return final_crop_value
 
 def on_worker_process(data):
     """
@@ -324,7 +430,10 @@ def on_worker_process(data):
         split_file_out = os.path.splitext(data.get('file_out'))
 
         output_file_path = f'{split_file_out[0]}{split_file_in[1]}'
-
+        if settings.get_setting('auto-crop'):
+            crop_value = detect_black_bars(abspath, probe)
+            if crop_value:
+                mapper.stream_encoding.extend(['-vf', f'crop={crop_value}'])
         if settings.get_setting('2-pass'):
             two_pass_folder_split = os.path.split(data.get('file_out'))
             two_pass_file_split = os.path.split(abspath)

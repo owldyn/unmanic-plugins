@@ -91,3 +91,6 @@ The initial pass is much faster than the second pass for actual encoding.
 Increases quality at slight increase in filesize.
 Requires your ffmpeg to support it, the default ffmpeg on most/all linux distributions doesn't support it by default.
 If your ffmpeg instance doesn't support it, it will silently fail and default to 8-bit.
+
+[b] Auto crop black bars [/b]
+Will attempt to crop the black bars. Care using this as it may crop more than you want. Always keep backups!
