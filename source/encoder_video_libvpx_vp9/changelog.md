@@ -1,3 +1,7 @@
+**<span style="color:#56adda">0.2.1</span>**
+- Add more robust way of detecting the crop.
+- Fix where duration is being fetched.
+
 **<span style="color:#56adda">0.2.0</span>**
 - Add a second way to get duration if the original one fails.
 

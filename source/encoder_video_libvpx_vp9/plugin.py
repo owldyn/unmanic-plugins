@@ -287,7 +287,7 @@ def conv_duration(duration):
     duration += float(duration_list[2])
     return duration
 
-def get_video_stream_data(streams):
+def get_video_stream_data(streams, format):
     width = 0
     height = 0
     video_stream_index = 0
@@ -296,7 +296,7 @@ def get_video_stream_data(streams):
             width = stream.get('width', stream.get('coded_width', 0))
             height = stream.get('height', stream.get('coded_height', 0))
             # Multiple places duration could be, apparently?
-            duration = stream.get('duration')
+            duration = format.get('duration')
             if duration:
                 duration = float(duration)
             else:
@@ -321,7 +321,7 @@ def detect_black_bars(abspath, probe):
     probe_data = probe.get_probe()
     
     # TODO: Detect video duration. Base the ss param off the duration of the video in the probe data
-    duration, v_height, v_width = get_video_stream_data(probe_data.get('streams'))
+    duration, v_width, v_height = get_video_stream_data(probe_data.get('streams'), probe_data.get('format'))
     timestamps = [duration/i for i in range(2,6)]
     crop_values = []
     for timestamp in timestamps:
@@ -329,7 +329,7 @@ def detect_black_bars(abspath, probe):
         mapper = StreamMapper(logger, ['video', 'audio', 'subtitle', 'data', 'attachment'])
         mapper.set_input_file(abspath)
         mapper.set_ffmpeg_generic_options(**{"-ss": str(timestamp)})
-        mapper.set_ffmpeg_advanced_options(**{"-vframes": '10', '-vf': 'cropdetect'})
+        mapper.set_ffmpeg_advanced_options(**{"-vframes": '100', '-vf': 'cropdetect=round=2'})
         mapper.set_output_null()
 
         # Build ffmpeg command for detecting black bars
@@ -365,9 +365,16 @@ def detect_black_bars(abspath, probe):
             final_crop_split = final_crop_value.split(':')
             final_crop_width = int(final_crop_split[0])
             final_crop_height = int(final_crop_split[1])
-            # We only want the crop that takes the least away
-            if final_crop_width > crop_width or final_crop_height > crop_height:
-                final_crop_value = value
+            # We want the crop that takes the most away, but in a sane way.
+            # Since the vast majority of black bars will be on the top and bottom
+            # We'll assume widest and shortest is correct, as long as it is more than 50% the original height.
+            if crop_height > (v_height/2):
+                if final_crop_width <= crop_width:
+                    final_crop_value = value
+                elif final_crop_height > crop_height:
+                    if (final_crop_width*0.95) <= crop_width:
+                        final_crop_value = value
+
     
     if final_crop_value:
         crop_split = final_crop_value.split(':')
