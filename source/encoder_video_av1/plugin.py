@@ -125,7 +125,7 @@ class PluginStreamMapper(StreamMapper):
         stream_encoding = [
                 '-c:v:{}'.format(stream_id), 'libsvtav1',
                 '-preset', self.settings.get_setting('preset'),
-                '-crf', self.settings.get_setting('crf'),
+                '-qp', self.settings.get_setting('crf'),
         ]
 
         return {
