@@ -341,23 +341,8 @@ def on_worker_process(data):
             crop_value = detect_black_bars(abspath, probe)
             if crop_value:
                 mapper.stream_encoding.extend(['-vf', f'crop={crop_value}'])
-        if settings.get_setting('2-pass'):
-            two_pass_folder_split = os.path.split(data.get('file_out'))
-            two_pass_file_split = os.path.split(abspath)
-            two_pass_log_file_path = f'{two_pass_folder_split[0]}/{two_pass_file_split[1]}'
-            data['repeat'] = True
-
-            if os.path.exists(f'{two_pass_log_file_path}{two_pass_subfix}'):
-                mapper.set_output_file(output_file_path)
-                two_pass_args = ['-pass', '2', '-passlogfile', f'{two_pass_log_file_path}']
-                data['repeat'] = False
-            else:
-                mapper.set_output_null()
-                two_pass_args = ['-pass', '1', '-passlogfile', f'{two_pass_log_file_path}', '-an']
-            mapper.stream_encoding.extend(two_pass_args)
-        else:
-            data['repeat'] = False
-            mapper.set_output_file(output_file_path)
+        data['repeat'] = False
+        mapper.set_output_file(output_file_path)
 
         # Get generated ffmpeg args
         ffmpeg_args = mapper.get_ffmpeg_args()
