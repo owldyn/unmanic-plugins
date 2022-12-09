@@ -348,6 +348,8 @@ def on_worker_process(data):
             crop_value = detect_black_bars(abspath, probe)
             if crop_value:
                 mapper.stream_encoding.extend(['-vf', f'crop={crop_value}'])
+        data['repeat'] = False
+        mapper.set_output_file(output_file_path)
 
         # Get generated ffmpeg args
         ffmpeg_args = mapper.get_ffmpeg_args()
