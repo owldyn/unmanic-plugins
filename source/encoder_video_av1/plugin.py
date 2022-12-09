@@ -41,6 +41,7 @@ class Settings(PluginSettings):
         "crf":      "30",
         "preset": "6",
         "auto-crop": False,
+        "10-bit": True,
     }
     form_settings = {
         "crf":      {
@@ -62,7 +63,11 @@ class Settings(PluginSettings):
         "auto-crop": {
             "label":         "Auto Crop Black Bars",
             "input_type":    "checkbox",
-        }
+        },
+        "10-bit": {
+            "label":         "10 bit encoding",
+            "input_type":    "checkbox",
+        },
     }
 
 
@@ -127,7 +132,10 @@ class PluginStreamMapper(StreamMapper):
                 '-preset', self.settings.get_setting('preset'),
                 '-qp', self.settings.get_setting('crf'),
         ]
-
+        if self.settings.get_setting("10-bit"):
+            stream_encoding.extend(
+                ['-pix_fmt', 'yuv420p10le']
+            )
         return {
             'stream_mapping':  ['-map', '0:v:{}'.format(stream_id)],
             'stream_encoding': stream_encoding,
@@ -329,7 +337,6 @@ def on_worker_process(data):
     if mapper.streams_need_processing():
         # Set the input file
         mapper.set_input_file(abspath)
-        two_pass_subfix = "-0.log" # TODO check all numbers not just 0, just in case.
 
         # Set the output file
         # Do not remux the file. Keep the file out in the same container
@@ -341,8 +348,6 @@ def on_worker_process(data):
             crop_value = detect_black_bars(abspath, probe)
             if crop_value:
                 mapper.stream_encoding.extend(['-vf', f'crop={crop_value}'])
-        data['repeat'] = False
-        mapper.set_output_file(output_file_path)
 
         # Get generated ffmpeg args
         ffmpeg_args = mapper.get_ffmpeg_args()
