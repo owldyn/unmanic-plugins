@@ -131,7 +131,8 @@ class PluginStreamMapper(StreamMapper):
                 '-c:v:{}'.format(stream_id), 'libsvtav1',
                 '-preset', self.settings.get_setting('preset'),
                 '-qp', self.settings.get_setting('crf'),
-                '-svtav1-params', 'enable-overlays=1:input-depth=10:enable-tf=0:sdc=1:film-grain=0'
+                '-svtav1-params', 'enable-overlays=1:input-depth=10:enable-tf=0:film-grain=0',
+                '-g', '120',
         ]
         if self.settings.get_setting("10-bit"):
             stream_encoding.extend(
