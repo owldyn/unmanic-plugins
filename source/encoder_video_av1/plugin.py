@@ -38,10 +38,10 @@ logger = logging.getLogger("Unmanic.Plugin.encoder_video_libvpx_vp9")
 
 class Settings(PluginSettings):
     settings = {
-        "crf":      "30",
+        "crf":      "23",
         "preset": "6",
         "auto-crop": False,
-        "10-bit": True,
+        "10-bit": False
     }
     form_settings = {
         "crf":      {
@@ -131,6 +131,7 @@ class PluginStreamMapper(StreamMapper):
                 '-c:v:{}'.format(stream_id), 'libsvtav1',
                 '-preset', self.settings.get_setting('preset'),
                 '-qp', self.settings.get_setting('crf'),
+                '-svtav1-params', 'enable-overlays=1:input-depth=10:enable-tf=0:sdc=1:film-grain=0'
         ]
         if self.settings.get_setting("10-bit"):
             stream_encoding.extend(
