@@ -1,4 +1,4 @@
-**<span style="color:#56adda">0.0.5</span>**
+**<span style="color:#56adda">0.0.7</span>**
 - Fix vp9 blocking processing, add debug logging.
 
 **<span style="color:#56adda">0.0.5</span>**

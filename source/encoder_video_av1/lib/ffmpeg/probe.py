@@ -170,9 +170,9 @@ class Probe(object):
             # This will only happen if it was not a file that could be probed.
             self.logger.debug("File unable to be probed by FFProbe - '{}'".format(file_path))
             return
-        except Exception as e:
+        except Exception:
             # The process failed for some unknown reason. Log it.
-            self.logger.debug("Failed to set file probe - ".format(str(e)))
+            self.logger.debug("Failed to set file probe" ,exc_info=1)
             return
 
     def get_probe(self):
