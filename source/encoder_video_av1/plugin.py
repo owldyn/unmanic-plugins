@@ -115,9 +115,12 @@ class PluginStreamMapper(StreamMapper):
 
     def test_stream_needs_processing(self, stream_info: dict):
         if stream_info.get('codec_name').lower() in self.image_video_codecs:
+            logger.debug("Codec is image codec, passing.")
             return False
-        if stream_info.get('codec_name').lower() in ['vp9', 'av1']:
+        if stream_info.get('codec_name').lower() in ['av1']:
+            logger.debug("Codec is already av1, passing.")
             return False
+        logger.debug("Stream is good to process.")
         return True
 
     def custom_stream_mapping(self, stream_info: dict, stream_id: int):
