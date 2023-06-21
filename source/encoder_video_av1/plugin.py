@@ -33,7 +33,7 @@ from encoder_video_av1.lib.ffmpeg.probe import Probe
 from encoder_video_av1.lib.ffmpeg.stream_mapper import StreamMapper
 
 # Configure plugin logger
-logger = logging.getLogger("Unmanic.Plugin.encoder_video_libvpx_vp9")
+logger = logging.getLogger("Unmanic.Plugin.encoder_video_av1")
 
 
 class Settings(PluginSettings):
