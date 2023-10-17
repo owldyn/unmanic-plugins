@@ -1,3 +1,6 @@
+**<span style="color:#56adda">0.2.3</span>**
+- Fix ffprobe blindly stopping on "error", now it's slightly smarter
+
 **<span style="color:#56adda">0.2.1</span>**
 - Add more robust way of detecting the crop.
 - Fix where duration is being fetched.
