@@ -1,0 +1,19 @@
+{
+    "author": "Owldyn, Josh.5",
+    "compatibility": [
+        1,
+        2
+    ],
+    "description": "Ensure all video streams are encoded with the av1 codec. This is in very early stages.",
+    "id": "encoder_video_av1",
+    "name": "Video Encoder AV1 (CPU)",
+    "platform": [
+        "all"
+    ],
+    "priorities": {
+        "on_library_management_file_test": 99,
+        "on_worker_process": 0
+    },
+    "tags": "video,encoder,ffmpeg,library file test",
+    "version": "0.0.8"
+}

@@ -1,0 +1,69 @@
+{
+    "repo": {
+        "id": "repository.owldyn",
+        "name": "owldyn-plugins",
+        "icon": "",
+        "repo_data_directory": "https://raw.githubusercontent.com/owldyn/unmanic-plugins/repo/",
+        "repo_data_url": "https://raw.githubusercontent.com/owldyn/unmanic-plugins/repo/repo.json"
+    },
+    "plugins": [
+        {
+            "author": "Owldyn, Josh.5",
+            "compatibility": [
+                1,
+                2
+            ],
+            "description": "Ensure all video streams are encoded with the av1 codec. This is in very early stages.",
+            "id": "encoder_video_av1",
+            "name": "Video Encoder AV1 (CPU)",
+            "platform": [
+                "all"
+            ],
+            "priorities": {
+                "on_library_management_file_test": 99,
+                "on_worker_process": 0
+            },
+            "tags": "video,encoder,ffmpeg,library file test",
+            "version": "0.0.8"
+        },
+        {
+            "author": "Owldyn, Josh.5",
+            "compatibility": [
+                1,
+                2
+            ],
+            "description": "Ensure all video streams are encoded with the VP9 codec using the libvpx-vp9 encoder.",
+            "icon": "https://raw.githubusercontent.com/Josh5/unmanic.plugin.encoder_video_libvpx_vp9/master/icon.png",
+            "id": "encoder_video_libvpx_vp9",
+            "name": "Video Encoder VP9 - libvpx-vp9 (CPU)",
+            "platform": [
+                "all"
+            ],
+            "priorities": {
+                "on_library_management_file_test": 99,
+                "on_worker_process": 0
+            },
+            "tags": "video,encoder,ffmpeg,library file test",
+            "version": "0.2.3"
+        },
+        {
+            "author": "Owldyn, Josh.5",
+            "compatibility": [
+                1,
+                2
+            ],
+            "description": "Ignore files that haven't been modified on disk for a certain amount of time.",
+            "icon": "https://raw.githubusercontent.com/Josh5/unmanic.plugin.ignore_files_recently_modified/master/icon.png",
+            "id": "ignore_files_older_than",
+            "name": "Ignore files older than",
+            "platform": [
+                "all"
+            ],
+            "priorities": {
+                "on_library_management_file_test": 2
+            },
+            "tags": "library file test",
+            "version": "0.0.2"
+        }
+    ]
+}
