@@ -26,7 +26,7 @@ import mimetypes
 import os
 import subprocess
 from logging import Logger
-
+import re
 from .mimetype_overrides import MimetypeOverrides
 
 
@@ -59,7 +59,7 @@ def ffprobe_cmd(params):
         raw_output = out.decode("utf-8")
     except Exception as e:
         raise FFProbeError(command, str(e))
-    if pipe.returncode == 1 or 'error' in raw_output:
+    if pipe.returncode == 1 or re.search(r"([^a-zA-Z]|^)error([^a-zA-Z]|$)", raw_output):
         raise FFProbeError(command, raw_output)
     if not raw_output:
         raise FFProbeError(command, 'No info found')

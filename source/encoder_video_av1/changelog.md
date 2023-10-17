@@ -1,5 +1,8 @@
+**<span style="color:#56adda">0.0.8</span>**
+- Fix ffprobe blindly stopping on "error", now it's slightly smarter
+
 **<span style="color:#56adda">0.0.7</span>**
-- Fix vp9 blocking processing, add debug logging.
+- Fix vp9 blocking processing, add debug log.
 
 **<span style="color:#56adda">0.0.5</span>**
 - Add additional parameters for better quality
